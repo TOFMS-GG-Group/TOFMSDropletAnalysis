@@ -1,30 +1,62 @@
 import sys
 import time
-from asyncio import Queue
+import Queue
 
 import cv2
-import numpy as np
 from PyQt5 import QtWidgets, Qt
 from PyQt5 import uic
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QPoint, QTimer
 from PyQt5.QtGui import QImage, QPixmap, QFont, QPainter
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5.uic.properties import QtGui, QtCore
 
 from edu.iastate.tofmsdropletanalysis.microdrop import Microdrop
 from edu.iastate.tofmsdropletanalysis.test_application import get_all_drops
 
-IMG_SIZE = 1280, 720  # 640,480 or 1280,720 or 1920,1080
-IMG_FORMAT = QImage.Format_RGB888
-DISP_SCALE = 2  # Scaling factor for display image
-DISP_MSEC = 50  # Delay between display cycles
-CAP_API = cv2.CAP_ANY  # API: CAP_ANY or CAP_DSHOW etc...
-EXPOSURE = 0  # Zero for automatic exposure
-
-camera_num = 1  # Default camera (first in list)
-image_queue = Queue.Queue()  # Queue to hold images
-capturing = True  # Flag to indicate capturing
-
 m = Microdrop()
+
+running = False
+capture_thread = None
+q = Queue
+
+
+def grab(cam, queue, width, height, fps):
+    global running
+    capture = cv2.VideoCapture(cam)
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+    capture.set(cv2.CAP_PROP_FPS, fps)
+
+    while (running):
+        frame = {}
+        capture.grab()
+        retval, img = capture.retrieve(0)
+        frame["img"] = img
+
+        if queue.qsize() < 10:
+            queue.put(frame)
+        else:
+            print
+            queue.qsize()
+
+
+class ImageWidget(QtGui.QWidget):
+    def __init__(self, parent=None):
+        super(ImageWidget, self).__init__(parent)
+        self.image = None
+
+    def setImage(self, image):
+        self.image = image
+        sz = image.size()
+        self.setMinimumSize(sz)
+        self.update()
+
+    def paintEvent(self, event):
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        if self.image:
+            qp.drawImage(QtCore.QPoint(0, 0), self.image)
+        qp.end()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -63,18 +95,14 @@ class MainWindow(QtWidgets.QMainWindow):
         # Drops
         self.spinBoxDrops.valueChanged.connect(self.change_dropstriple)
 
-        self.startButton.clicked.connect(self.openCamera)
-        self.stopButton.clicked.connect(self.stopCamera)
+        self.startButton.clicked.connect(self.start_camera)
+        self.stopButton.clicked.connect(self.stop_camera)
 
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.nextFrameSlot)
+        self.ImgWidget = ImageWidget(self.ImgWidget)
 
-    def nextFrameSlot(self):
-        rval, frame = self.vc.read()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(image)
-        self.label.setPixmap(pixmap)
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.update_frame)
+        self.timer.start(1)
 
     ########################################################################
     # connecting functions to GUI. "set" functions encode the numbers
@@ -155,6 +183,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def change_dropstriple(self):
         drops = self.spinBoxDrops.value()
         m.set_drops(drops)
+
+    def start_camera(self):
+        pass
+
+    def stop_camera(self):
+        pass
 
 
 # call this last to execute app
