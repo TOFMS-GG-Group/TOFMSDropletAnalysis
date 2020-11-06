@@ -1,6 +1,6 @@
 running = False
 capture_thread = None
-form_class = uic.loadUiType("simple.ui")[0]
+form_class = uic.loadUiType("ui/simple.ui")[0]
 q = Queue.Queue()
  
 
