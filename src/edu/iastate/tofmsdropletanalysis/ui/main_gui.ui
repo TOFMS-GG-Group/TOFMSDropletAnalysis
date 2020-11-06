@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
+    <width>733</width>
     <height>841</height>
    </rect>
   </property>
@@ -66,7 +66,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_Droplet">
         <attribute name="title">
@@ -82,7 +82,7 @@
             </sizepolicy>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tab_singlePulse">
             <attribute name="title">
@@ -1095,6 +1095,47 @@
          <string>Pressure Control</string>
         </attribute>
        </widget>
+       <widget class="QWidget" name="videoFeed">
+        <attribute name="title">
+         <string>Page</string>
+        </attribute>
+        <widget class="QWidget" name="ImgWidget" native="true">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>461</width>
+           <height>501</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="startButton">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>520</y>
+           <width>181</width>
+           <height>32</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Start Capture</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="stopButton">
+         <property name="geometry">
+          <rect>
+           <x>282</x>
+           <y>520</y>
+           <width>181</width>
+           <height>32</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Stop Capture</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </item>
      <item row="0" column="1">
@@ -1108,8 +1149,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>464</width>
-     <height>18</height>
+     <width>733</width>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -1163,19 +1204,19 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_tripleTrigger"/>
-  <buttongroup name="buttonGroup_tripleRelease"/>
   <buttongroup name="buttonGroup_singleTrigger"/>
-  <buttongroup name="buttonGroup_singleRelease"/>
-  <buttongroup name="buttonGroup_startDrops">
-   <property name="exclusive">
-    <bool>false</bool>
-   </property>
-  </buttongroup>
   <buttongroup name="buttonGroup_startCamera">
    <property name="exclusive">
     <bool>false</bool>
    </property>
   </buttongroup>
+  <buttongroup name="buttonGroup_tripleRelease"/>
+  <buttongroup name="buttonGroup_tripleTrigger"/>
+  <buttongroup name="buttonGroup_startDrops">
+   <property name="exclusive">
+    <bool>false</bool>
+   </property>
+  </buttongroup>
+  <buttongroup name="buttonGroup_singleRelease"/>
  </buttongroups>
 </ui>

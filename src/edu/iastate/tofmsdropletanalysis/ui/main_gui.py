@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MDG_gui_NEWTAB.ui'
+# Form implementation generated from reading ui file 'main_gui.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
-from PyQt5 import QtCore, QtGui, QtWidgets
 
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(464, 841)
+        MainWindow.resize(733, 841)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                           QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
@@ -27,8 +26,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(0, 0, 641, 610))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-                                           QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
@@ -622,13 +620,25 @@ class Ui_MainWindow(object):
         self.tab_2.setEnabled(False)
         self.tab_2.setObjectName("tab_2")
         self.tabWidget.addTab(self.tab_2, "")
+        self.videoFeed = QtWidgets.QWidget()
+        self.videoFeed.setObjectName("videoFeed")
+        self.ImgWidget = QtWidgets.QWidget(self.videoFeed)
+        self.ImgWidget.setGeometry(QtCore.QRect(10, 10, 461, 501))
+        self.ImgWidget.setObjectName("ImgWidget")
+        self.startButton = QtWidgets.QPushButton(self.videoFeed)
+        self.startButton.setGeometry(QtCore.QRect(10, 520, 181, 32))
+        self.startButton.setObjectName("startButton")
+        self.stopButton = QtWidgets.QPushButton(self.videoFeed)
+        self.stopButton.setGeometry(QtCore.QRect(282, 520, 181, 32))
+        self.stopButton.setObjectName("stopButton")
+        self.tabWidget.addTab(self.videoFeed, "")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.tabWidget)
         self.widget = QtWidgets.QWidget(self.frame)
         self.widget.setObjectName("widget")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.widget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 464, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 733, 22))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
@@ -652,8 +662,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
-        self.tab_DropletSubtab.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(2)
+        self.tab_DropletSubtab.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -673,8 +683,7 @@ class Ui_MainWindow(object):
         self.label_sglStrobeWidth.setText(_translate("MainWindow", "Strobe Width:"))
         self.pushButton_sgldrops.setText(_translate("MainWindow", "Start Droplets"))
         self.pushButton_sglcamera.setText(_translate("MainWindow", "Start Camera"))
-        self.tab_DropletSubtab.setTabText(self.tab_DropletSubtab.indexOf(self.tab_singlePulse),
-                                          _translate("MainWindow", "Single Pulse"))
+        self.tab_DropletSubtab.setTabText(self.tab_DropletSubtab.indexOf(self.tab_singlePulse), _translate("MainWindow", "Single Pulse"))
         self.label_releasemode.setText(_translate("MainWindow", "Release Mode:"))
         self.radioButton_triggerMDG.setText(_translate("MainWindow", "MDG"))
         self.label_Voltage.setText(_translate("MainWindow", "Voltage (V):"))
@@ -693,11 +702,12 @@ class Ui_MainWindow(object):
         self.label_strobewidth.setText(_translate("MainWindow", "Strobe Width:"))
         self.pushButton_drops.setText(_translate("MainWindow", "Start Droplets"))
         self.pushButton_camera.setText(_translate("MainWindow", "Start Camera"))
-        self.tab_DropletSubtab.setTabText(self.tab_DropletSubtab.indexOf(self.tab_triplePulse),
-                                          _translate("MainWindow", "Triple Pulse"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Droplet),
-                                  _translate("MainWindow", "Droplet Generation"))
+        self.tab_DropletSubtab.setTabText(self.tab_DropletSubtab.indexOf(self.tab_triplePulse), _translate("MainWindow", "Triple Pulse"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Droplet), _translate("MainWindow", "Droplet Generation"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Pressure Control"))
+        self.startButton.setText(_translate("MainWindow", "Start Capture"))
+        self.stopButton.setText(_translate("MainWindow", "Stop Capture"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.videoFeed), _translate("MainWindow", "Page"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionLoad_Settings.setText(_translate("MainWindow", "Load Settings..."))
         self.actionLoad_Settings.setShortcut(_translate("MainWindow", "Ctrl+O"))
@@ -711,10 +721,10 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+

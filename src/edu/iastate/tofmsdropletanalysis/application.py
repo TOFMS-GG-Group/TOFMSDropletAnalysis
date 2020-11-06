@@ -1,56 +1,80 @@
 import sys
 import time
+from asyncio import Queue
 
-from PyQt5 import QtWidgets
+import cv2
+import numpy as np
+from PyQt5 import QtWidgets, Qt
 from PyQt5 import uic
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QPoint, QTimer
+from PyQt5.QtGui import QImage, QPixmap, QFont, QPainter
+from PyQt5.QtWidgets import QWidget
 
 from edu.iastate.tofmsdropletanalysis.microdrop import Microdrop
+from edu.iastate.tofmsdropletanalysis.test_application import get_all_drops
+
+IMG_SIZE = 1280, 720  # 640,480 or 1280,720 or 1920,1080
+IMG_FORMAT = QImage.Format_RGB888
+DISP_SCALE = 2  # Scaling factor for display image
+DISP_MSEC = 50  # Delay between display cycles
+CAP_API = cv2.CAP_ANY  # API: CAP_ANY or CAP_DSHOW etc...
+EXPOSURE = 0  # Zero for automatic exposure
+
+camera_num = 1  # Default camera (first in list)
+image_queue = Queue.Queue()  # Queue to hold images
+capturing = True  # Flag to indicate capturing
 
 m = Microdrop()
 
 
 class MainWindow(QtWidgets.QMainWindow):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # load in GUI from qtDesigner in '.ui' format. Must be in same directory as .py file
-        uic.loadUi("MDG_gui_NEWTAB.ui", self)
+        uic.loadUi("ui/main_gui.ui", self)
 
-        self._connect_handlers()
+        self._init()
 
-    #########################################
-    ############## Handlers #################
-    #########################################
-
-    # connect names of widgets to functions that give them actions
-    def _connect_handlers(self):
-
-        ### start/stop
+    # Connect Qt UI handlers.
+    def _init(self):
+        # Start and Stop
         self.pushButton_drops.clicked.connect(self.tripledrops_clicked)
         self.pushButton_camera.clicked.connect(self.camera_clicked)
 
-        ########### triple pulse ###########
-        # voltage
+        # Voltage
         self.spinBoxV1.valueChanged.connect(self.change_triplevoltage)
         self.spinBoxV2.valueChanged.connect(self.change_triplevoltage)
         self.spinBoxV3.valueChanged.connect(self.change_triplevoltage)
 
-        # pulse width
+        # Pulse Width
         self.doubleSpinBoxPWidth1.valueChanged.connect(self.change_triplepulselength)
         self.doubleSpinBoxPWidth2.valueChanged.connect(self.change_triplepulselength)
         self.doubleSpinBoxPWidth3.valueChanged.connect(self.change_triplepulselength)
 
-        # pulse delay
+        # Pulse Delay
         self.doubleSpinBoxPDelay1.valueChanged.connect(self.change_triplepulsedelay)
         self.doubleSpinBoxPDelay2.valueChanged.connect(self.change_triplepulsedelay)
         self.doubleSpinBoxPDelay2.valueChanged.connect(self.change_triplepulsedelay)
 
-        # frequency
+        # Frequency
         self.spinBoxFreq.valueChanged.connect(self.change_freqtriple)
 
-        # drops
+        # Drops
         self.spinBoxDrops.valueChanged.connect(self.change_dropstriple)
+
+        self.startButton.clicked.connect(self.openCamera)
+        self.stopButton.clicked.connect(self.stopCamera)
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.nextFrameSlot)
+
+    def nextFrameSlot(self):
+        rval, frame = self.vc.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(image)
+        self.label.setPixmap(pixmap)
 
     ########################################################################
     # connecting functions to GUI. "set" functions encode the numbers
@@ -131,6 +155,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def change_dropstriple(self):
         drops = self.spinBoxDrops.value()
         m.set_drops(drops)
+
 
 # call this last to execute app
 def main():
