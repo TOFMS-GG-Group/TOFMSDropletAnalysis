@@ -1,8 +1,16 @@
+import sys
+import threading
+from queue import Queue
+
+import cv2
+from PyQt5 import uic, QtGui, QtCore
+from PyQt5.QtWidgets import QWidget, QMainWindow, QApplication
+
 running = False
 capture_thread = None
-form_class = uic.loadUiType("ui/simple.ui")[0]
-q = Queue.Queue()
- 
+form_class = uic.loadUiType("simple.ui")[0]
+q = Queue()
+
 
 def grab(cam, queue, width, height, fps):
     global running
@@ -11,8 +19,8 @@ def grab(cam, queue, width, height, fps):
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
     capture.set(cv2.CAP_PROP_FPS, fps)
 
-    while(running):
-        frame = {}        
+    while (running):
+        frame = {}
         capture.grab()
         retval, img = capture.retrieve(0)
         frame["img"] = img
@@ -20,9 +28,11 @@ def grab(cam, queue, width, height, fps):
         if queue.qsize() < 10:
             queue.put(frame)
         else:
-            print queue.qsize()
+            print
+            queue.qsize()
 
-class OwnImageWidget(QtGui.QWidget):
+
+class OwnImageWidget(QWidget):
     def __init__(self, parent=None):
         super(OwnImageWidget, self).__init__(parent)
         self.image = None
@@ -41,22 +51,21 @@ class OwnImageWidget(QtGui.QWidget):
         qp.end()
 
 
-
-class MyWindowClass(QtGui.QMainWindow, form_class):
+class MyWindowClass(QMainWindow, form_class):
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
         self.startButton.clicked.connect(self.start_clicked)
-        
+        self.stopButton.clicked.connect(self.stop_clicked)
+
         self.window_width = self.ImgWidget.frameSize().width()
         self.window_height = self.ImgWidget.frameSize().height()
-        self.ImgWidget = OwnImageWidget(self.ImgWidget)       
+        self.ImgWidget = OwnImageWidget(self.ImgWidget)
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(1)
-
 
     def start_clicked(self):
         global running
@@ -65,6 +74,9 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.startButton.setEnabled(False)
         self.startButton.setText('Starting...')
 
+    def stop_clicked(self):
+        global running
+        running = False
 
     def update_frame(self):
         if not q.empty():
@@ -79,8 +91,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
 
             if scale == 0:
                 scale = 1
-            
-            img = cv2.resize(img, None, fx=scale, fy=scale, interpolation = cv2.INTER_CUBIC)
+
+            img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             height, width, bpc = img.shape
             bpl = bpc * width
@@ -92,10 +104,9 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         running = False
 
 
+capture_thread = threading.Thread(target=grab, args=(0, q, 1920, 1080, 30))
 
-capture_thread = threading.Thread(target=grab, args = (0, q, 1920, 1080, 30))
-
-app = QtGui.QApplication(sys.argv)
+app = QApplication(sys.argv)
 w = MyWindowClass(None)
 w.setWindowTitle('Kurokesu PyQT OpenCV USB camera test panel')
 w.show()
