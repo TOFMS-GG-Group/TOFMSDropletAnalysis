@@ -1099,16 +1099,6 @@
         <attribute name="title">
          <string>Page</string>
         </attribute>
-        <widget class="QWidget" name="ImgWidget" native="true">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>461</width>
-           <height>501</height>
-          </rect>
-         </property>
-        </widget>
         <widget class="QPushButton" name="startButton">
          <property name="geometry">
           <rect>
@@ -1135,6 +1125,31 @@
           <string>Stop Capture</string>
          </property>
         </widget>
+        <widget class="QLabel" name="ImgWidget">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>-10</y>
+           <width>640</width>
+           <height>480</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>640</width>
+           <height>480</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>640</width>
+           <height>480</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -1150,7 +1165,7 @@
      <x>0</x>
      <y>0</y>
      <width>733</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -1210,13 +1225,13 @@
     <bool>false</bool>
    </property>
   </buttongroup>
-  <buttongroup name="buttonGroup_tripleRelease"/>
-  <buttongroup name="buttonGroup_tripleTrigger"/>
   <buttongroup name="buttonGroup_startDrops">
    <property name="exclusive">
     <bool>false</bool>
    </property>
   </buttongroup>
   <buttongroup name="buttonGroup_singleRelease"/>
+  <buttongroup name="buttonGroup_tripleRelease"/>
+  <buttongroup name="buttonGroup_tripleTrigger"/>
  </buttongroups>
 </ui>
