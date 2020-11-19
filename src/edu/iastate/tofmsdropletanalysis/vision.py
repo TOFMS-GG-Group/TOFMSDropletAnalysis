@@ -162,7 +162,7 @@ def get_all_drops_cara(im, y0=200):
 
 # -------------------------------------------------------------------------
 
-# detect if there is someting runing out of the nozzle ( const flow ) 
+# detect if there is someting runing out of the nozzle ( const flow )
 # -------------------------------------------------------------------------
 def nozzleFlow_detection(im, y0=200, x0=250):
     # return = val : size of the liquid steam
@@ -196,7 +196,7 @@ def nozzleFlow_detection(im, y0=200, x0=250):
 
 
 # ---------------------------------------------------------------------------
-#  Inspect the tip of the nozzle to check if there is a contamination 
+#  Inspect the tip of the nozzle to check if there is a contamination
 # ---------------------------------------------------------------------------
 def nozzle_clean(im, y0=0, x0=0, samples=10):
     # ---------------------------------------------------------------------------
@@ -326,8 +326,8 @@ def Extracthist_mean(img, showhist=0):
 
 
 # ---------------------------------------------------------------------------
-# return >0  : distance between two line ( pixel in image sample) 
-# return = 0 : only one line (pixel in the image sample)  
+# return >0  : distance between two line ( pixel in image sample)
+# return = 0 : only one line (pixel in the image sample)
 # return -1  : no line in the image sample
 
 

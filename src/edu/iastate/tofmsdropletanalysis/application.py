@@ -15,6 +15,7 @@ from edu.iastate.tofmsdropletanalysis.vision import get_all_drops
 # m = Microdrop()
 m = None
 
+
 # TODO: Update the params to find the only circle we care about.
 def circle_detect(img):
     grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -50,7 +51,7 @@ class VideoThread(QThread):
 
         while self._run_flag:
             ret, cv_img = cap.read()
-            
+
             if ret:
                 cv_img = circle_detect(cv_img)
 
@@ -58,7 +59,6 @@ class VideoThread(QThread):
             else:
                 # TODO This code is only for looping the sample video.
                 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
 
         cap.release()
 
