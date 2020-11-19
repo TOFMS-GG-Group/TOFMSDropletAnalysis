@@ -15,6 +15,26 @@ from edu.iastate.tofmsdropletanalysis.vision import get_all_drops
 # m = Microdrop()
 m = None
 
+# TODO: Update the params to find the only circle we care about.
+def circle_detect(img):
+    grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    grey_blurred = cv2.blur(grey, (3, 3))
+
+    detected_circles = cv2.HoughCircles(grey_blurred,
+                                        cv2.HOUGH_GRADIENT, 1, 20, param1=50,
+                                        param2=30, minRadius=1, maxRadius=40)
+
+    if detected_circles is not None:
+        detected_circles = np.uint16(np.around(detected_circles))
+
+        for pt in detected_circles[0, :]:
+            a, b, r = pt[0], pt[1], pt[2]
+
+            cv2.circle(img, (a, b), r, (0, 255, 0), 2)
+
+    return img
+
 
 # TODO Change to use the XiCam API.
 # TODO Handle the Droplet Analysis.
@@ -30,16 +50,15 @@ class VideoThread(QThread):
 
         while self._run_flag:
             ret, cv_img = cap.read()
-
-            gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
-            grayBlurred = cv2.blur(gray, (3, 3))
-
-            droplets = get_all_drops(grayBlurred)
-
-            print(droplets)
-
+            
             if ret:
+                cv_img = circle_detect(cv_img)
+
                 self.change_pixmap_signal.emit(cv_img)
+            else:
+                # TODO This code is only for looping the sample video.
+                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
 
         cap.release()
 
