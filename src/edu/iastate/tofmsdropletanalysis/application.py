@@ -12,7 +12,6 @@ import numpy as np
 from ximea import xiapi
 
 from edu.iastate.tofmsdropletanalysis.microdrop import Microdrop
-from edu.iastate.tofmsdropletanalysis.vision import get_all_drops
 
 m = Microdrop()
 
