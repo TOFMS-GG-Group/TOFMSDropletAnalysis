@@ -9,22 +9,25 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 
 import numpy as np
+from ximea import xiapi
 
+from edu.iastate.tofmsdropletanalysis.microdrop import Microdrop
 from edu.iastate.tofmsdropletanalysis.vision import get_all_drops
 
-# m = Microdrop()
-m = None
+m = Microdrop()
 
 
-# TODO: Update the params to find the only circle we care about.
+# dp, minDist, param1, param2, minRadius, maxRadius = None
+
 def circle_detect(img):
-    grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_bak = img
 
-    grey_blurred = cv2.blur(grey, (3, 3))
+    if len(img.shape) == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    detected_circles = cv2.HoughCircles(grey_blurred,
-                                        cv2.HOUGH_GRADIENT, 1, 20, param1=50,
-                                        param2=30, minRadius=1, maxRadius=40)
+    detected_circles = cv2.HoughCircles(img,
+                                        cv2.HOUGH_GRADIENT, 2, 20, param1=200,
+                                        param2=100, minRadius=1, maxRadius=40)
 
     if detected_circles is not None:
         detected_circles = np.uint16(np.around(detected_circles))
@@ -32,13 +35,11 @@ def circle_detect(img):
         for pt in detected_circles[0, :]:
             a, b, r = pt[0], pt[1], pt[2]
 
-            cv2.circle(img, (a, b), r, (0, 255, 0), 2)
+            cv2.circle(img_bak, (a, b), r, (0, 255, 0), 2)
 
-    return img
+    return img_bak
 
 
-# TODO Change to use the XiCam API.
-# TODO Handle the Droplet Analysis.
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
 
@@ -47,20 +48,57 @@ class VideoThread(QThread):
         self._run_flag = True
 
     def run(self):
-        cap = cv2.VideoCapture(0)
+        # cap = cv2.VideoCapture(0)
+
+        # create instance for first connected camera
+        cam = xiapi.Camera()
+
+        # start communication
+        print('Opening first camera...')
+        cam.open_device()
+
+        # settings
+        cam.set_exposure(200000)
+        cam.set_gain(7)
+
+        is_data_collecting = False
 
         while self._run_flag:
-            ret, cv_img = cap.read()
+            img = xiapi.Image()
 
-            if ret:
-                cv_img = circle_detect(cv_img)
+            if not is_data_collecting:
+                is_data_collecting = True
 
-                self.change_pixmap_signal.emit(cv_img)
-            else:
-                # TODO This code is only for looping the sample video.
-                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                cam.start_acquisition()
 
-        cap.release()
+            cam.get_image(img)
+
+            data = img.get_image_data_numpy()
+
+            # ret, cv_img = cap.read()
+
+            if data is not None:
+                print("Data: ")
+                print(data)
+
+                # cv2.cvtColor(data, cv2.COLOR_RGB2GRAY)
+                data = cv2.cvtColor(data, cv2.COLOR_GRAY2BGR)
+
+                data = circle_detect(data)
+
+                self.change_pixmap_signal.emit(data)
+            # else:
+            # TODO This code is only for looping the sample video.
+            # cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+        # cap.release()
+
+        # stop data acquisition
+        print('Stopping acquisition...')
+        cam.stop_acquisition()
+
+        # stop communication
+        cam.close_device()
 
     def stop(self):
         self._run_flag = False
