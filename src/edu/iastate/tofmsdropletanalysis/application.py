@@ -22,16 +22,29 @@ def circle_detect(img):
     img_bak = img
 
     if len(img.shape) == 3:
+        # Converts the current frame from the video device to greyscale.
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+    # Detects circle in the current frame using the Hough Circles Hough Gradient Algorithm.
+    # img -> current frame
+    # method: cv2.HOUGH_GRADIENT -> HoughCircle method
+    # dp: 2 -> Inverse ratio of the accumulator resolution to the image resolution. 
+    # We choose a higher number than the usual value 1 because of how small our droplet is.
+    # minDist: 20 -> The minimal distance between circles.
+    # param1: 200 -> Higher threshold of the two passed to the Canny edge detector (the lower one is twice smaller).
+    # param2: 100 -> The accumulator threshold for the circle centers at the detection stage.
+    # minRadius: 1 -> The minimum radius to detect.
+    # maxRadius: 40 -> The maximum radius to detect.
     detected_circles = cv2.HoughCircles(img,
                                         cv2.HOUGH_GRADIENT, 2, 20, param1=200,
                                         param2=100, minRadius=1, maxRadius=40)
 
+    # Loop through all the circles we detect and draw a circle arround them.
     if detected_circles is not None:
         detected_circles = np.uint16(np.around(detected_circles))
 
         for pt in detected_circles[0, :]:
+            # The x, y, radius values of the circle.
             a, b, r = pt[0], pt[1], pt[2]
 
             cv2.circle(img_bak, (a, b), r, (0, 255, 0), 2)
